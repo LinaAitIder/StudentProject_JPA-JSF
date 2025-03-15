@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+
+<html
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+>
+
+<head>
+    <title>Add Student</title>
+</head>
+<body>
+<h1>Add Student</h1>
+<h:form>
+    <h:outputLabel for="name" value="Name:" />
+    <h:inputText id="name" value="#{studentController.student.name}" required="true" />
+    <br/>
+    <h:outputLabel for="mail" value="Email:" />
+    <h:inputText id="mail" value="#{studentController.student.mail}" required="true" />
+    <br/>
+    <h:outputLabel for="course" value="Course:" />
+    <h:inputText id="course" value="#{studentController.student.course}" required="true" />
+    <br/>
+    <h:outputLabel for="year" value="Year:" />
+    <h:inputText id="year" value="#{studentController.student.year}" required="true" />
+    <br/>
+    <h:commandButton value="Add Student" action="#{studentController.addStudent}" />
+</h:form>
+</body>
+</html>
