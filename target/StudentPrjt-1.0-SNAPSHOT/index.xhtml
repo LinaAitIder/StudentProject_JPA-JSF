@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html   xmlns="http://www.w3.org/1999/xhtml"
-        xmlns:h="http://java.sun.com/jsf/html"
-        xmlns:f="http://xmlns.jakarta.faces.core"
-        xmlns:p="http://primefaces.org/ui"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:o="http://omnifaces.org/ui"
+        xmlns:of="http://omnifaces.org/functions"
 >
 <h:head>
     <title>Students List</title>
@@ -11,7 +12,10 @@
 <h:body>
 <h1>Students List</h1>
 <h:form>
-    <h:dataTable value="#{studentController.students}" var="student" id="DataTable">
+    <h:inputText value="#{studentController.searchKeyword}">
+        <f:ajax event="keyup" listener="#{studentController.searchStudent}" render="loadSearchResult"/>
+    </h:inputText>
+    <h:dataTable value="#{studentController.searchResult}" var="student" id="loadSearchResult">
         <h:column>
             <f:facet name="header">ID</f:facet>
             #{student.id}
@@ -32,8 +36,17 @@
             <f:facet name="header">Year</f:facet>
             #{student.year}
         </h:column>
+        <h:column>
+            <h:commandButton value="Delete" action="#{studentController.deleteStudent(student.id)}" style="height: 40px!important; padding: 10px;"/>
+        </h:column>
+        <h:column>
+            <h:commandButton value="Update" action="addStudent.xhtml">
+                <f:param name="id" value="#{student.id}" />
+                <f:param name="action" value="update" />
+            </h:commandButton>
+        </h:column>
     </h:dataTable>
-    <h:commandButton value="Add" action="addStudent.xhtml" style="height: 40px!important; padding: 10px;"/>
+    <h:commandButton value="Add" action="addStudent.xhtml?action=update" style="height: 40px!important; padding: 10px;"/>
 </h:form>
 </h:body>
 </html>

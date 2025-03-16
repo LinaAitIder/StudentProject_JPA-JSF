@@ -24,7 +24,10 @@
     <h:outputLabel for="year" value="Year:" />
     <h:inputText id="year" value="#{studentController.student.year}" required="true" />
     <br/>
-    <h:commandButton value="Add Student" action="#{studentController.addStudent}" />
+    <h:commandButton value="Add Student" action="#{studentController.addUpdateStudent}" >
+    </h:commandButton>
 </h:form>
+<h:outputText value="#{param.action}" />
+<h:outputText value="#{param.id}" />
 </body>
 </html>

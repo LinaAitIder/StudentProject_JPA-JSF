@@ -1,28 +1,60 @@
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.context.SessionScoped;
+import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Named("studentController")
-@ApplicationScoped
+@ViewScoped
 public class StudentController implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Student student = new Student();
-    private StudentDAO studentDAO = new StudentDAO();
     private String searchKeyword="";
+    private List<StudentDTO> searchResult;
     private List<Student> students;
+    private String Action;
+    private StudentService studentService = new StudentService();
+
+    String studentId;
+    String action;
 
     @PostConstruct
     public void init() {
-        students = studentDAO.getAllStudents(); // Make sure this returns the correct data.
+        studentId = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("id");
+        action = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("action");
+
+        // For Debugging
+        if (action != null) {
+            if ("update".equals(action)) {
+                System.out.println("Update action triggered for studentId: " + studentId);
+            } else if ("add".equals(action)) {
+                System.out.println("Add action triggered");
+            }
+        } else {
+            System.out.println("No action parameter found.");
+        }
     }
+
+
+    public String getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(String studentId) {
+        this.studentId = studentId;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
     public void setSearchKeyword(String searchKeyword) {
         this.searchKeyword = searchKeyword;
     }
@@ -37,33 +69,40 @@ public class StudentController implements Serializable {
         this.student = student;
     }
 
-    public List<Student> getStudents() {
-        if (students == null) {
-            students = studentDAO.getAllStudents();
-        }
-        return students;
+    public List<StudentDTO> getStudents() {
+      return studentService.getAllStudents();
     }
 
     public String addStudent() {
-        studentDAO.addStudent(student);
-        students = null;
+        studentService.saveStudent(studentService.convertEntityToDTO(student));
         return "index.xhtml";
     }
 
     public String deleteStudent(int studentId){
-        studentDAO.delete(studentId);
-        students = null;
+        studentService.delete(studentId);
         return "index.xhtml";
     }
 
-    public void searchStudent(){
-        if(searchKeyword != null && !searchKeyword.isEmpty()){
-            students = new ArrayList<Student>();
-        }else {
-            students = studentDAO.getAllStudents().stream()
-                    .filter(s->s.getName().toLowerCase().contains(searchKeyword.toLowerCase()))
-                    .collect(Collectors.toList());
-        }
-
+    public String updateStudent(int studentId){
+            studentService.updateStudentData(studentId , student);
+            return "index.xhtml";
     }
+
+    public void addUpdateStudent(){
+        System.out.println("Action: " + action);
+        if(action.equals("add")){
+            this.addStudent();
+        } else if(action.equals("update")){
+            this.updateStudent(Integer.parseInt(studentId));
+        }
+    }
+
+    public void searchStudent(String searchKeyword){
+        searchResult = studentService.searchStudent(searchKeyword);
+    }
+
+    public List<StudentDTO> getSearchResult() {
+       return studentService.searchStudent(searchKeyword);
+    }
+
 }

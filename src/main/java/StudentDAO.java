@@ -46,18 +46,30 @@ public class StudentDAO {
         em.close();
     }
 
+    public void update(int studentId , Student student) {
+        EntityManager em = JPAUtil.getEntityManager();
+        em.getTransaction().begin();
+        Student newStudent = em.find(Student.class, studentId);
+        newStudent.setName(student.getName());
+        newStudent.setMail(student.getMail());
+        newStudent.setCourse(student.getCourse());
+        newStudent.setYear(student.getYear());
+        em.getTransaction().commit();
+        em.close();
+    }
 
-    /*public List<Student> searchStudent(String keyword) {
+    public List<Student> searchStudent(String keyword) {
         EntityManager em = JPAUtil.getEntityManager();
         TypedQuery<Student> query = em.createQuery(
                 "SELECT s FROM Student s WHERE s.name LIKE :keyword", Student.class
         );
         query.setParameter("keyword", "%" + keyword + "%");
-        List<Student> result = query.getResultList();
+        List<Student> result =  query.getResultList();
         em.close();
         return result;
+
     }
-    */
+
 
 
 }
